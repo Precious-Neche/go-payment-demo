@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Payment - Paystack Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-arrow-left me-2"></i>
+                Back to Home
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-white text-center py-4">
+                        <h2 class="mb-0"><i class="fas fa-credit-card me-2"></i>Complete Your Payment</h2>
+                        <p class="text-muted mb-0 mt-2">You're being redirected to Paystack to complete your payment</p>
+                    </div>
+                    
+                    <div class="card-body p-5">
+                        <!-- Order Summary -->
+                        <div class="row mb-5">
+                            <div class="col-md-6">
+                                <div class="card border-0 bg-light">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fas fa-receipt me-2"></i>Order Summary</h5>
+                                        <hr>
+                                        <p><strong>Reference:</strong> <span id="reference">{{.Reference}}</span></p>
+                                        <p><strong>Amount:</strong> ₦<span id="amount">{{.Amount}}</span></p>
+                                        <p><strong>Email:</strong> <span id="email">{{.Email}}</span></p>
+                                        <p><strong>Date:</strong> <span id="date">{{.Date}}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="card border-0 bg-light">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fas fa-info-circle me-2"></i>Payment Instructions</h5>
+                                        <hr>
+                                        <ol class="ps-3">
+                                            <li class="mb-2">Click the "Pay Now" button below</li>
+                                            <li class="mb-2">You'll be redirected to Paystack</li>
+                                            <li class="mb-2">Enter your card details securely</li>
+                                            <li class="mb-2">Complete the payment on Paystack</li>
+                                            <li class="mb-2">You'll be redirected back here automatically</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Action -->
+                        <div class="text-center">
+                            <div id="paymentStatus" class="alert alert-info">
+                                <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                                Preparing your secure payment link...
+                            </div>
+                            
+                            <div id="paymentAction" class="mt-4">
+                                <a id="paystackLink" href="{{.PaymentURL}}" class="btn btn-primary btn-lg px-5 py-3" target="_blank">
+                                    <i class="fas fa-lock me-2"></i>Pay Securely with Paystack
+                                </a>
+                                
+                                <p class="text-muted mt-3">
+                                    <i class="fas fa-shield-alt me-1"></i>
+                                    Your payment is secured by Paystack's 256-bit SSL encryption
+                                </p>
+                            </div>
+                            
+                            <!-- Auto-redirect countdown -->
+                            <div class="mt-4" id="countdownContainer">
+                                <p class="text-muted">
+                                    Redirecting to Paystack in <span id="countdown">5</span> seconds...
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Alternative Options -->
+                        <div class="mt-5 pt-4 border-top">
+                            <h5><i class="fas fa-exchange-alt me-2"></i>Need Help?</h5>
+                            <div class="row mt-3">
+                                <div class="col-md-4">
+                                    <button class="btn btn-outline-secondary w-100" onclick="copyReference()">
+                                        <i class="far fa-copy me-1"></i>Copy Reference
+                                    </button>
+                                </div>
+                                <div class="col-md-4">
+                                    <a href="/" class="btn btn-outline-secondary w-100">
+                                        <i class="fas fa-home me-1"></i>Back to Home
+                                    </a>
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-outline-danger w-100" id="cancelBtn">
+                                        <i class="fas fa-times me-1"></i>Cancel Payment
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Test Cards Info -->
+                <div class="card mt-4">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0"><i class="fas fa-credit-card me-2"></i>Test Cards (Sandbox Mode)</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Card Number</th>
+                                        <th>CVV</th>
+                                        <th>Expiry</th>
+                                        <th>PIN</th>
+                                        <th>OTP</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>408 408 408 408 4081</code></td>
+                                        <td><code>408</code></td>
+                                        <td>Any future date</td>
+                                        <td><code>1234</code></td>
+                                        <td><code>123456</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>512 345 678 901 2346</code></td>
+                                        <td><code>123</code></td>
+                                        <td>Any future date</td>
+                                        <td><code>1234</code></td>
+                                        <td><code>123456</code></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="text-muted small mb-0">
+                            <i class="fas fa-info-circle me-1"></i>
+                            These are test cards. No real money will be charged.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/payment.js"></script>
+</body>
+</html>
